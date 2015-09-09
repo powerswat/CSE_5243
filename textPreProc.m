@@ -1,6 +1,6 @@
 function textPreProc
 
-inputDir = 'C:\Users\Young Suk Cho\Dropbox\CSE 5243 Datamining\CSE5243-master\reuters';
+inputDir = 'C:\Users\Young Suk Cho\Dropbox\CSE 5243 Datamining\CSE5243-master\reuters\';
 
 % Read all the sgm file names  (Import findFiles)
 [files,paths] = findFiles(inputDir, '.sgm', 1);
@@ -56,21 +56,23 @@ for i=1:length(paths)
 %         end
         term_idx = term_idx + 1;
 
+%         bodyTxt{term_idx} = strsplit(rawTexts{i}(bdy_idcs{i,1}(j)+length('<body>') ...
+%         :bdy_idcs{i,2}(j)-1))';
+
         bodyTxt{term_idx} = strread(rawTexts{i}(bdy_idcs{i,1}(j)+length('<body>') ...
-        :bdy_idcs{i,2}(j)-1), '%s', 'delimiter', ' ')';
+        :bdy_idcs{i,2}(j)-1),'%s','delimiter',' ');
     
-        if term_idx < 500
-            continue
-        end
-    
-%         % Stemming needed here!!!!!!!!!!!!
+%         if term_idx < 8100
+%             continue
+%         end
+%     
+        % Stemming needed here!!!!!!!!!!!!
         [bodyTxt{term_idx}, stemDict, isTerminate] = stemmer('', bodyTxt{term_idx}, term_idx, dictPart1);
         bodyTxt{term_idx}(find(cellfun(@isempty, bodyTxt{term_idx}))) = [];
-        dictPart1 = stemDict;
-        
         if isTerminate == 1
             return;
         end
+        dictPart1 = stemDict;
 %     
 %         [uqWds,~,wdIdx]=unique(bodyTxt{(i-1)*j+j});
 %         nUqWds = length(uqWds);
