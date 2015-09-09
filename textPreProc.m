@@ -56,16 +56,21 @@ for i=1:length(paths)
 %         end
         term_idx = term_idx + 1;
 
-        bodyTxt{term_idx} = strsplit(rawTexts{i}(bdy_idcs{i,1}(j)+length('<body>') ...
-        :bdy_idcs{i,2}(j)-1))';
+        bodyTxt{term_idx} = strread(rawTexts{i}(bdy_idcs{i,1}(j)+length('<body>') ...
+        :bdy_idcs{i,2}(j)-1), '%s', 'delimiter', ' ')';
     
-%         if term_idx < 8100
-%             continue
-%         end
-%     
+        if term_idx < 500
+            continue
+        end
+    
 %         % Stemming needed here!!!!!!!!!!!!
-%         [bodyTxt{term_idx}, stemDict] = stemmer('', bodyTxt{term_idx}, term_idx, dictPart1);
-%         bodyTxt{term_idx}(find(cellfun(@isempty, bodyTxt{term_idx}))) = [];
+        [bodyTxt{term_idx}, stemDict, isTerminate] = stemmer('', bodyTxt{term_idx}, term_idx, dictPart1);
+        bodyTxt{term_idx}(find(cellfun(@isempty, bodyTxt{term_idx}))) = [];
+        dictPart1 = stemDict;
+        
+        if isTerminate == 1
+            return;
+        end
 %     
 %         [uqWds,~,wdIdx]=unique(bodyTxt{(i-1)*j+j});
 %         nUqWds = length(uqWds);
