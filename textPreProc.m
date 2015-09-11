@@ -175,7 +175,7 @@ else
     IDF = IDF(txtOnlyIdcs, :);
     IDF = [IDF, cell(size(IDF,1), 2)];
     IDF(:,4) = num2cell(log10((length(IDF)./cell2mat(IDF(:,2)))));
-    keep_idx = find(cell2mat(IDF(:,2))>1);
+    keep_idx = find(cell2mat(IDF(:,2))>18);
     IDF = IDF(keep_idx,:);
     [~,s_idx] = sort(cell2mat(IDF(:,2)));
     IDF = IDF(s_idx,:);
