@@ -1,4 +1,4 @@
-function [strData, stemDict, isTerminate] = stemmer(url, strData, iterNo, stemDict)
+function [strData, stemDict] = stemmer(url, strData, iterNo, stemDict)
 
 if ~exist('url', 'var') || isempty(url), url = ...
     sprintf('http://dictionary.reference.com/browse/'); end
@@ -14,8 +14,11 @@ stemDict = cell(length(strData), 2);
 for i=1:length(stemDict)
     
     % Check if the query word is already added in the DB.
-    if ~isempty(find(strcmp(dictPart1(:,1), strData{i})))
+    if ~isempty(find(strcmp(dictPart1(:,1), strData{i}))) 
         strData{i} = char(dictPart1(min(find(strcmp(dictPart1(:,1), strData{i}))),2));
+        continue;
+    elseif ~isempty(find(strcmp(stemDict(:,1), strData{i})))
+        strData{i} = char(dictPart1(min(find(strcmp(stemDict(:,1), strData{i}))),2));
         continue;
     end
     
@@ -28,11 +31,8 @@ for i=1:length(stemDict)
     end
     
     % Read the dictionary page source for each given word
-    isTerminate = 0;
-    [sourcefile, status] = urlread(sprintf([url, strData{i}, '?s=t']));  
+    [sourcefile, ~] = urlread(sprintf([url, strData{i}, '?s=t']));  
     if (isempty(sourcefile))
-        disp('Access is blocked!!')
-        iterNo
         stemDict{i,1} = strData{i};
         stemDict{i,2} = strData{i};
         continue;
