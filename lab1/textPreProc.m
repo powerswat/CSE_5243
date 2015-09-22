@@ -316,10 +316,10 @@ if isTpcFeat == 0
     
     tpcFeatMat = cntVec;
     tpcVectLabel = tpcVec;
-    save([baseDir, 'tpcFeat_fin.mat'], 'tpcFeatMat', 'tpcVectLabel');
+    save([baseDir, 'tpcFeat_fin.mat'], 'tpcFeatMat', 'tpcVectLabel', 'cntVec');
 end
 
-if isBodyFeat == 0
+if isBodyFeat == 1
     [row, ~] = find(cntVec);
     row = unique(row);
     idcs = [1:length(cntVec)]';
@@ -331,17 +331,21 @@ if isBodyFeat == 0
     bdy_loc(mod0Idx,2) = 1000;
     bdy_loc(mod0Idx,1) = bdy_loc(mod0Idx,1) - 1;
 
-    featCand = cell(length(emptRow),1);
+    featCand = cell(length(emptRow),2);
     for i=1:length(emptRow)
         if TFnewIdx(emptRow(i))>0
             if ~isempty(TFIDF{TFnewIdx(emptRow(i))})
-                featCand{i} = char(TFIDF{TFnewIdx(emptRow(i))}(1,1));
+                featCand{i,1} = char(TFIDF{TFnewIdx(emptRow(i))}(1,1));
+                featCand{i,2} = cell2mat(TFIDF{TFnewIdx(emptRow(i))}(1,5));
             end
         end
     end
-    keep_idx = find(~cellfun(@isempty, featCand));
-    featCand = featCand(keep_idx);
-    featCand = unique(featCand);
+    [keep_idx,~] = find(~cellfun(@isempty, featCand));
+    featCand = featCand(keep_idx,:);
+    [~,s_idx] = sort(cell2mat(featCand(:,2)), 'descend');
+    featCand = featCand(s_idx,:);
+    [~,row] = unique(featCand(:,1), 'stable');
+    featCand = featCand(row,:);
     
     bdyFeatMat = zeros(length(plcTxt),length(featCand));
     for i=1:length(featCand)
@@ -358,12 +362,12 @@ if isBodyFeat == 0
 
     colSums = sum(bdyFeatMat)';
     [~, s_idx] = sort(colSums, 'descend');
-    featCand = featCand(s_idx);
+    featCand = featCand(s_idx,:);
     bdyFeatMat = bdyFeatMat(:,s_idx);
-    featCand(1:19) = [];
-    bdyFeatMat(:,1:19) = [];
-    featCand(801:end) = [];
-    bdyFeatMat(:,801:end) = [];
+%     featCand(1:19) = [];
+%     bdyFeatMat(:,1:19) = [];
+%     featCand(801:end) = [];
+%     bdyFeatMat(:,801:end) = [];
    
     bdyVectLabel = featCand;
     save([baseDir, 'bdyFeat_fin.mat'], 'bdyFeatMat', 'bdyVectLabel');
