@@ -245,7 +245,7 @@ else
         IDF = IDF(txtOnlyIdcs, :);
         IDF = [IDF, cell(size(IDF,1), 2)];
         IDF(:,4) = num2cell(log10((length(IDF)./cell2mat(IDF(:,2)))));
-        keep_idx = find(cell2mat(IDF(:,2))>18);
+        keep_idx = find(cell2mat(IDF(:,2))>0);
         IDF = IDF(keep_idx,:);
         [~,s_idx] = sort(cell2mat(IDF(:,2)));
         IDF = IDF(s_idx,:);
@@ -319,7 +319,7 @@ if isTpcFeat == 0
     save([baseDir, 'tpcFeat_fin.mat'], 'tpcFeatMat', 'tpcVectLabel', 'cntVec');
 end
 
-if isBodyFeat == 1
+if isBodyFeat == 0
     [row, ~] = find(cntVec);
     row = unique(row);
     idcs = [1:length(cntVec)]';

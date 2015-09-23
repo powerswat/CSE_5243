@@ -47,32 +47,11 @@ bdyFeatMat = bdyFeatMat(:,rnd_idx);
 % http://www.mathworks.com/help/stats/classification-using-nearest-neighbors.html
 
 % Split the dataset into a training and a testing dataset
-[tpcRow, ~] = find(tpcFeatMat);
-tpcRow = unique(tpcRow);
-tpcIdcs = [1:length(tpcFeatMat)]';
-[bdyRow, ~] = find(bdyFeatMat);
-bdyRow = unique(bdyRow);
-bdyIdcs = [1:length(bdyFeatMat)]';
-trnDocIds = intersect(tpcRow, bdyRow);
-X = bdyFeatMat(trnDocIds,:);
-T = tpcFeatMat(trnDocIds,:);
-docIDLoc = zeros(length(X),1);
-rnd_idx = randperm(length(X))';
-docIDLoc = trnDocIds(rnd_idx);
-X = X(rnd_idx,:);
-T = T(rnd_idx,:);
-trnEdIdx = floor(length(X)*0.7);
-trnX = X(1:trnEdIdx,:);
-trnDocID = docIDLoc(1:trnEdIdx);
-valEdIdx = trnEdIdx + floor(length(X)*0.1);
-valX = X(trnEdIdx+1:valEdIdx,:);
-valDocID = docIDLoc(trnEdIdx+1:valEdIdx);
-tstX = X(valEdIdx+1:length(X),:);
-tstDocID = docIDLoc(valEdIdx+1:length(X));
+[trnX,tstX] = genLearningDataset(tpcFeatMat, bdyFeatMat);
 
 % Compares the document at trnDocID(nghbrIDs(:,1)) and that at
 % trnDocID(valDocID) based on the content of each body text
-[nghbrIDs, dists] = knnsearch(trnX, valX, 'K', 5);
+[nghbrIDs, dists] = knnsearch(trnX, tstX, 'K', 5);
 
 
 %% Run the second classifier Naive bayes like
