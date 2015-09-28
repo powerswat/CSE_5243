@@ -88,7 +88,7 @@ plc_idcs = idcSets{find(~cellfun(@isempty, strfind(stTags, '<places>')))};
 newid_idcs = idcSets{find(~cellfun(@isempty, strfind(stTags, 'newid')))};
 
 % Stem for body text
-if isBodyComplete == 0
+if isBodyComplete == 1
     bodyTxt = cell(numBodies,1);    
     term_idx = 0;
     
@@ -109,7 +109,7 @@ if isBodyComplete == 0
             bodyTxt{i} = bodyTxt{i}(txtOnlyIdcs, :);
             
             % Stem the word if necessary
-            if isDictComplete == 0
+            if isDictComplete == 1
                 [bodyTxt{term_idx}, stemDict] = stemmer('', bodyTxt{term_idx}, term_idx, dictPart1);
                 bodyTxt{term_idx}(find(cellfun(@isempty, bodyTxt{term_idx}))) = [];
                 dictPart1 = stemDict;            
@@ -292,7 +292,7 @@ end
         tpcVec = unique(tpcVec);
 
 % Composite the feature vector
-if isTpcFeat == 0
+if isTpcFeat == 1
     maxWordLen = max(cellfun(@length, strfind(tpcTxt, ' ')));
     tpcMat = cell(length(tpcTxt), maxWordLen);
     for i=1:length(tpcTxt)
@@ -316,14 +316,16 @@ if isTpcFeat == 0
     
     tpcFeatMat = cntVec;
     tpcVectLabel = tpcVec;
-    save([baseDir, 'tpcFeat_fin.mat'], 'tpcFeatMat', 'tpcVectLabel', 'cntVec');
+    [tpc_is,tpc_js,tpc_vals] = find(tpcFeatMat);
+    save([baseDir, 'tpcFeat_fin.mat'], 'tpc_is' ,'tpc_js', 'tpcVectLabel', 'cntVec');
 end
 
-if isBodyFeat == 0
+if isBodyFeat == 1
     [row, ~] = find(cntVec);
     row = unique(row);
     idcs = [1:length(cntVec)]';
-    emptRow = setdiff(idcs,row);
+%     emptRow = setdiff(idcs,row);
+    emptRow = [1:length(cntVec)]';
     bdy_loc = zeros(length(emptRow),2);
     bdy_loc(:,1) = floor(emptRow./1000)+1;
     bdy_loc(:,2) = mod(emptRow, 1000);
@@ -331,12 +333,21 @@ if isBodyFeat == 0
     bdy_loc(mod0Idx,2) = 1000;
     bdy_loc(mod0Idx,1) = bdy_loc(mod0Idx,1) - 1;
 
-    featCand = cell(length(emptRow),2);
+    max_len = 0;
+    for i=1:length(TFIDF)
+        max_len = max(max_len,length(TFIDF{i}));
+    end
+    
+    featCand = cell(length(emptRow)*max_len,2);
+    cnt = 1;
     for i=1:length(emptRow)
         if TFnewIdx(emptRow(i))>0
             if ~isempty(TFIDF{TFnewIdx(emptRow(i))})
-                featCand{i,1} = char(TFIDF{TFnewIdx(emptRow(i))}(1,1));
-                featCand{i,2} = cell2mat(TFIDF{TFnewIdx(emptRow(i))}(1,5));
+                for j=1:size(TFIDF{TFnewIdx(emptRow(i))},1)
+                    featCand{cnt,1} = char(TFIDF{TFnewIdx(emptRow(i))}(j,1));
+                    featCand{cnt,2} = cell2mat(TFIDF{TFnewIdx(emptRow(i))}(j,5));
+                    cnt = cnt + 1;
+                end
             end
         end
     end
@@ -370,7 +381,8 @@ if isBodyFeat == 0
 %     bdyFeatMat(:,801:end) = [];
    
     bdyVectLabel = featCand;
-    save([baseDir, 'bdyFeat_fin.mat'], 'bdyFeatMat', 'bdyVectLabel');
+    [bdy_is,bdy_js,bdy_vals] = find(bdyFeatMat);
+    save([baseDir, 'bdyFeat_fin.mat'], 'bdy_is', 'bdy_js', 'bdy_vals', 'bdyVectLabel', '-v7.3');
 end
 
 if isPlc == 0
