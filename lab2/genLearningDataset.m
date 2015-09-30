@@ -1,8 +1,9 @@
 function [trnX, valX, cmplDocIds, bdyVectLabel, trnT, valT, trnDocID, valDocID] = ...
-                genLearningDataset(tpcFeatMat, bdyFeatMat, ...
-                    tpcVectLabel, bdyVectLabel, isSmallSet, cmplDocIds, TFIDF)
+                genLearningDataset(tpcFeatMat, bdyFeatMat, tpcVectLabel, ...
+            bdyVectLabel, isSmallSet, cmplDocIds, TFIDF, trn_ratio)
 
 if ~exist('TFIDF', 'var') || isempty(TFIDF), TFIDF = 0; end
+if ~exist('trn_ratio', 'var') || isempty(trn_ratio), trn_ratio = 0.8; end
 
 rng(22);
 
@@ -11,7 +12,7 @@ tpcRow = unique(tpcRow);
 [bdyRow, ~] = find(bdyFeatMat);
 bdyRow = unique(bdyRow);
 
-% Pick 512 features if it is asked to make the smaller set
+% Pick a half of the whole features if it is asked to make the smaller set
 if isSmallSet == 1
     isFilledInFullMat = zeros(length(bdyFeatMat),1);
     isFilledInFullMat(cmplDocIds) = 1;
@@ -60,7 +61,7 @@ docIDLoc = cmplDocIds(rnd_idx);
 X = X(rnd_idx,:);
 T = T(rnd_idx,:);
 
-trnEdIdx = floor(size(X,1)*0.8);
+trnEdIdx = floor(size(X,1) * trn_ratio);
 trnX = X(1:trnEdIdx,:);
 trnT = T(1:trnEdIdx,:);
 trnDocID = docIDLoc(1:trnEdIdx);
