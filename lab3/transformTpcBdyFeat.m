@@ -30,5 +30,5 @@ bdyVectLabel(dup_idcs,:) = [];
 [~,s_idx] = sort(cell2mat(bdyVectLabel(:,2)), 'descend');
 bdyVectLabel = bdyVectLabel(s_idx,:);
 bdyFeatMat = bdyFeatMat(:,s_idx);
-% bdyVectLabel(:,13701:end) = [];
-% bdyFeatMat(:,13701:end) = [];
+
+end
