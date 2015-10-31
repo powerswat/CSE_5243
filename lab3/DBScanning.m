@@ -1,82 +1,27 @@
-function [cluster] = DBScanning(tot_mat, min_pts, eps, dist_opt)
+function [cluster] = DBScanning(tot_mat, min_pts, eps, order)
 
-tot_row_size = size(tot_mat,1);
-
-dist_mat = zeros(tot_row_size, tot_row_size);
-
-cluster = zeros(tot_row_size,1);
+doc_num = size(tot_mat,1);
+cluster = zeros(doc_num,1);
 cluster_id = 1;
-cluster_pts = zeros(tot_row_size,1);
-push_idx = 1;
-pop_idx = 1;
+for i=1:doc_num
+    if cluster(i) == 0
+        [expd_cluster, cluster] = includeCluster(tot_mat, cluster, i, ...
+                                                cluster_id, eps, min_pts, order);
+        if expd_cluster
+            cluster_id = cluster_id + 1;
+        end
+    end
+end
 
-for i=1:tot_row_size
-    num_min_pts = 0;
-    if cluster(i)== 0
-        cluster(i) = cluster_id;
-    else
-        continue;
-    end
-    
-    j = 1;
-    k = i;
-    while true
-        if k==j
-            j = j + 1;
-            continue;
-        end
-        if j>=tot_row_size
-            rev_pop_idx = min(find(cluster_pts>0));
-            if isempty(rev_pop_idx)
-                break;
-            else
-                pop_idx = rev_pop_idx;
-            end
-            k = cluster_pts(pop_idx);
-            cluster_pts(pop_idx) = 0;
-            pop_idx = mod(pop_idx + 1, tot_row_size);
-            if k == 0
-                break;
-            end
-            num_min_pts = 0;
-            j = 1;
-            continue;
-        end
-        if cluster_pts(2)<0
-            cluster_pts = zeros(min_pts,1);
-        end 
-        
-        if strcmp(dist_opt, '')
-            dist_mat(k,j) = pdist([tot_mat(k,:); tot_mat(j,:)], 'minkowski', 2);
-        else
-            dist_mat(k,j) = pdist([tot_mat(k,:); tot_mat(j,:)], 'minkowski', 1);
-        end
-        dist_mat(j,k) = dist_mat(k,j);
-        
-        if(dist_mat(k,j) <= eps) && cluster(j) == 0
-            cluster(j) = cluster_id;
-            num_min_pts = num_min_pts + 1;
-            cluster_pts(push_idx) = j;
-            push_idx = mod(push_idx + 1, tot_row_size);
-        end
-        
-        if num_min_pts >= min_pts
-            k = cluster_pts(pop_idx);
-            cluster_pts(pop_idx) = 0;
-            pop_idx = mod(pop_idx + 1, tot_row_size);
-            if k == 0
-                break;
-            end
-            num_min_pts = 0;
-            j = 1;
-            
-            continue;
-        end
-        
-        j = j + 1;
-    end
-    
-    cluster_id = cluster_id + 1;
+score = cluster;
+core_idx = find(score > 0);
+border_pts = find(cluster == -2);
+for i=1:length(border_pts)
+    curr_b = border_pts(i);
+    neighbors = calcDist(+tot_mat(curr_b), +tot_mat(core_idx), order);
+    [tmp nearest_core] = min(neighbors);
+    nearest_core_idx = core_idx(nearest_core);
+    cluster(curr_b) = cluster(nearest_core_idx);
 end
 
 end

@@ -2,7 +2,7 @@ function [tot_mat, tot_vec_lbl, bdyVectLabel] = genHalfDataset(tot_mat, ...
                 tot_vec_lbl, bdyVectLabel)
 
 rng(28);
-rand_idx = randperm(size(tot_mat,1), 2000);
+rand_idx = randperm(size(tot_mat,1), 3000);
 tot_mat = tot_mat(rand_idx,:);
 
 filled_idcs = zeros(size(tot_mat,1),1);
