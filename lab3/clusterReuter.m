@@ -49,11 +49,19 @@ man_num_centorids = 140;
 % euc_num_centorids = euc_num_cluster;
 % man_num_centorids = man_num_cluster;
 
-[Euc_K_cluster, Man_K_cluster] = KmeansCluster(tot_mat, euc_num_centorids, ...
-                                                man_num_centorids);
+% [Euc_K_cluster, Man_K_cluster] = KmeansCluster(tot_mat, euc_num_centorids, ...
+%                                                 man_num_centorids);
+
+% [Euc_K_cluster] = kmeans(tot_mat, euc_num_centorids);
+% [Man_K_cluster] = kmeans(tot_mat, man_num_centorids, 'Distance', 'cityblock');
+
+[Euc_K_cluster] = KmeansCluster(tot_mat, euc_num_centorids, 2);
+% [Man_K_cluster] = KmeansCluster(tot_mat, man_num_centorids, 1);
+
 toc
 
 %% Analyze results
+analyzeResult(tot_mat, Euc_K_cluster);
 
  
 end
