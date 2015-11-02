@@ -4,7 +4,9 @@ function [cluster] = KmeansCluster(tot_mat, num_centroids, dist_mode)
 [num_rows, num_feats] = size(tot_mat);
 
 % Find initial centroids
-centroids = randperm(num_rows, num_centroids);
+% centroids = randperm(num_rows, num_centroids);
+centroids = randperm(num_rows);
+centroids = centroids(1:num_centroids);
 
 % Calculate distance between each point and all the centroids
 dist_mat = zeros(num_centroids, num_rows);
