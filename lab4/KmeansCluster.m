@@ -21,9 +21,16 @@ for i=1:num_rows
     cluster(i) = min_idx;
 end
 
-prev_cluster = 0;
-while length(find(prev_cluster == cluster)) < num_rows
+num_identical = 0;
+prev_num_identical = -1;
+while true 
+    if (num_identical == num_rows) || ...
+        (num_identical > num_rows - 10 && prev_num_identical == num_identical)
+        break;
+    end
+        
     prev_cluster = cluster;
+    prev_num_identical = num_identical;
     
     % Calculate a mean point for each cluster
     mean_points = zeros(num_centroids, num_feats);
@@ -35,17 +42,11 @@ while length(find(prev_cluster == cluster)) < num_rows
         else
             mean_points(i,:) = mean(mean_calc_template);
         end
-        if length(find(isnan(mean_points(i,:)))) > 0
-            a = 1;
-        end
     end
     
     % Calculate distance between each point and all the centroids
     for i=1:num_centroids
         dist_mat(i,:) = calcDist(mean_points(i,:), tot_mat, 2);
-        if sum(dist_mat(i,:)) == 0
-            a = 1;
-        end
     end
     
     % Assign all the data points into the closest cluster
@@ -54,6 +55,8 @@ while length(find(prev_cluster == cluster)) < num_rows
         min_idx = min(find(dist_mat(:,i) == min_dist));
         cluster(i) = min_idx;
     end
+    
+    num_identical = length(find(prev_cluster == cluster));
 end
 
 end
