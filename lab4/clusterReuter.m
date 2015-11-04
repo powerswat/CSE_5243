@@ -1,26 +1,34 @@
-function clusterReuter()
+function [Euc_DB_sil_score, Euc_DB_entropy, euc_DB_var, ...
+    Man_DB_sil_score, Man_DB_entropy, man_DB_var, ...
+    Euc_K_sil_score, Euc_K_entropy, euc_K_var, ...
+    Man_K_sil_score, Man_K_entropy, man_K_var] = clusterReuter(min_pts, eps)
 
 %% Read all the necessary input data
 baseDir = 'C:\Temp\CSE_5243\';
 disp('Read all the necessary input data');
 tic;
-[tot_mat, tot_vec_lbl, bdyVectLabel] = readInputMat(baseDir);
+[tot_mat, ~, rest_tot_mat, ~] = readInputMat(baseDir);
 toc
 
 
 %% Run DBScan Clustering
 tic;
-disp('Execute DBScan Clustering (Euclidean Distance)');
-euc_min_pts = 1;  
-euc_eps = 0.05;
-man_min_pts = 1;
-man_eps = 0.05;
 
-Euc_DB_cluster = DBScanning(tot_mat, euc_min_pts, euc_eps, 2);
+% DBScan clustering using Euclidean distance
+disp('Execute DBScan Clustering (Euclidean Distance)');
+Euc_DB_cluster = DBScanning(tot_mat, min_pts, eps, 2);
+
+% Assigning the remaining points into the appropriate cluster
+[Euc_DB_cluster] = AssignRest(Euc_DB_cluster, tot_mat, rest_tot_mat, 2);
 toc
+
+% DBScan clustering using Manhattan distance
 tic;
 disp('Execute DBScan Clustering (Manhattan Distance)');
-Man_DB_cluster = DBScanning(tot_mat, man_min_pts, man_eps, 1);
+Man_DB_cluster = DBScanning(tot_mat, min_pts, eps, 1);
+
+% Assigning the remaining points into the appropriate cluster
+[Man_DB_cluster] = AssignRest(Man_DB_cluster, tot_mat, rest_tot_mat, 2);
 toc
 
 % Generate some statistics for the clustering results
@@ -32,12 +40,22 @@ toc
 
 %% Run Kmeans Clustering
 tic;
+
+% Kmeans clustering using Euclidean distance
 disp('Execute Kmeans Clustering (Euclidean Distance)');
 [Euc_K_cluster] = KmeansCluster(tot_mat, euc_DB_num_cluster, 2);
+
+% Assigning the remaining points into the appropriate cluster
+[Euc_K_cluster] = AssignRest(Euc_K_cluster, tot_mat, rest_tot_mat, 2);
 toc
+
+% Kmeans clustering using Manhattan distance
 tic;
 disp('Execute Kmeans Clustering (Manhattan Distance)');
 [Man_K_cluster] = KmeansCluster(tot_mat, man_DB_num_cluster, 1);
+
+% Assigning the remaining points into the appropriate cluster
+[Man_K_cluster] = AssignRest(Man_K_cluster, tot_mat, rest_tot_mat, 2);
 toc
 
 % Generate some statistics for the clustering results
@@ -50,6 +68,7 @@ toc
 %% Analyze results
 tic;
 disp('Evaluate Clustering results');
+tot_mat = [tot_mat; rest_tot_mat];
 [Euc_DB_sil_score, Euc_DB_entropy] = analyzeResult(tot_mat, Euc_DB_cluster)
 euc_DB_var
 [Man_DB_sil_score, Man_DB_entropy] = analyzeResult(tot_mat, Man_DB_cluster)
@@ -61,6 +80,7 @@ man_K_var
 toc
  
 end
+
 
 %% Generate some statistics for the clustering results
 function [hist_map, num_cluster, variance] =  ...

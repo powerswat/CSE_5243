@@ -25,9 +25,9 @@ end
 
 num_identical = 0;
 prev_num_identical = -1;
+converge_cnt = 0;
 while true 
-    if (num_identical == num_rows) || ...
-        (num_identical > num_rows - 10 && prev_num_identical == num_identical)
+    if (num_identical == num_rows) || (converge_cnt > 4)
         break;
     end
         
@@ -59,6 +59,9 @@ while true
     end
     
     num_identical = length(find(prev_cluster == cluster));
+    if abs(prev_num_identical - num_identical) < 10
+        converge_cnt = converge_cnt + 1;
+    end
 end
 
 end

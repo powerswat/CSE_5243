@@ -1,4 +1,4 @@
-function [tot_mat, tot_vec_lbl, bdyVectLabel] = readInputMat(baseDir)
+function [tot_mat, tot_vec_lbl, rest_tot_mat, rest_vec_lbl] = readInputMat(baseDir)
 
 % Read the necessary mat files
 disp('Load existing Body features');
@@ -35,6 +35,7 @@ tot_mat(:,rmv_col) = [];
 % tot_mat(zero_vec_row,:) = [];
 
 % Add some excluded features so the feature matrix covers all the documents
-[tot_mat, tot_vec_lbl, bdyVectLabel] = genHalfDataset(tot_mat, tot_vec_lbl, bdyVectLabel);
+[tot_mat, tot_vec_lbl, rest_tot_mat, rest_vec_lbl] = ...
+                    genHalfDataset(tot_mat, tot_vec_lbl, bdyVectLabel);
 
 end
