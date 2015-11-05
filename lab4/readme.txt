@@ -8,7 +8,7 @@ How to run
 	   and press return.
 		>> lab4Driver
 
-        	a. Note: The program supports iterative run by providing multple elements
+        	a. Note: This program supports iterative run by providing multple elements
 			using the parameters as the example below. 
 			>> lab4Driver([1 2], [0.01 0.05 0.1])
 
@@ -18,8 +18,9 @@ How to run
 			providing any parameters.
 			
 	3. You can control the number of documents to be sampled by manipulating the code
-	   inside the program. If you feel that the program execution taking too long for 
-	   any reason, please manipulate the code at "line 7" in "genHalfDataset.m" as below:
+	   inside the program and that is the reason I did not include any small test input. 
+	   If you feel that the program execution taking too long for any reason, please 
+	   manipulate the code at "line 7" in "genHalfDataset.m" as below:
 
 	   rand_idx = rand_idx(1:3000); (Default: 3000)
 		--> rand_idx = rand_idx(1:[the_number_of_documents_you_want_to_sample]);
@@ -33,4 +34,18 @@ How to run
 			time with the default setting can take upto 25 minutes under the 
 			normal server condition.
 
-	4. All the analysis results will be saved in "result.txt".
+	4. Due to the restriction of the submission file size and the efficiency of I/O
+	   operation cost on the large size input matrices, I had to use the input files
+	   with .mat file format for operational purpose and keep the txt files of the 
+	   same data as a sparse matrix format for visualization purpose.
+	   
+	   If you want to check the contents of the whole feature vectors, you can check
+	   "tpcVectLable.txt" and "bdyVectLabel.txt". When the program executes those two
+	   matrices are combined into one matrix and selcted appropriately depending on 
+	   the randomly sampled documents. It means that the selected features may vary
+	   by every execution. (You can refer to the item 3-a and 4-a in the report to 
+	   see more in detail.)
+
+	5. All the analysis results will be saved in "result.txt". The legibility and
+	   readbility of the content in that file should be high enough to understand
+	   without any further description.
