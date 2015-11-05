@@ -1,0 +1,96 @@
+
+DBscan with Euclidean distance (min_pt: 1, eps: 0.01)
+Silhouette	Entropy		Variance	Duration
+0.27937		0.060055		358.7831	485.2302
+
+DBscan with Manhattan distance (min_pt: 1, eps: 0.01)
+Silhouette	Entropy		Variance	Duration
+0.31715		0.063028		495.053	420.0866
+
+Kmeans with Euclidean distance (min_pt: 1, eps: 0.01)
+Silhouette	Entropy		Variance	Duration
+0.17011	0.10354		1450.2395	1705.9972
+
+Kmeans with Manhattan distance (min_pt: 1, eps: 0.01)
+Silhouette	Entropy		Variance	Duration
+0.36838		0.18708		10167.8705	436.0393
+
+DBscan with Euclidean distance (min_pt: 1, eps: 0.05)
+Silhouette	Entropy		Variance	Duration
+0.28083		0.060057		359.4159	469.4734
+
+DBscan with Manhattan distance (min_pt: 1, eps: 0.05)
+Silhouette	Entropy		Variance	Duration
+0.30761		0.10775		1902.7246	303.0434
+
+Kmeans with Euclidean distance (min_pt: 1, eps: 0.05)
+Silhouette	Entropy		Variance	Duration
+0.17653	0.098894		1354.2457	1341.2995
+
+Kmeans with Manhattan distance (min_pt: 1, eps: 0.05)
+Silhouette	Entropy		Variance	Duration
+0.40116		0.26505		24628.8559	498.79
+
+DBscan with Euclidean distance (min_pt: 1, eps: 0.1)
+Silhouette	Entropy		Variance	Duration
+0.28049		0.068992		443.4707	407.4289
+
+DBscan with Manhattan distance (min_pt: 1, eps: 0.1)
+Silhouette	Entropy		Variance	Duration
+0.2829		0.32354		14156.0176	274.1402
+
+Kmeans with Euclidean distance (min_pt: 1, eps: 0.1)
+Silhouette	Entropy		Variance	Duration
+0.1338	0.13805		2474.626	729.1313
+
+Kmeans with Manhattan distance (min_pt: 1, eps: 0.1)
+Silhouette	Entropy		Variance	Duration
+0.39272		0.3195		51048.5258	286.0757
+
+DBscan with Euclidean distance (min_pt: 2, eps: 0.01)
+Silhouette	Entropy		Variance	Duration
+0.88538		0.0016243		153.0962	313.696
+
+DBscan with Manhattan distance (min_pt: 2, eps: 0.01)
+Silhouette	Entropy		Variance	Duration
+0.44071		0.0090923		130.5512	295.9408
+
+Kmeans with Euclidean distance (min_pt: 2, eps: 0.01)
+Silhouette	Entropy		Variance	Duration
+0.37545	0.53176		222231.5288	237.4705
+
+Kmeans with Manhattan distance (min_pt: 2, eps: 0.01)
+Silhouette	Entropy		Variance	Duration
+0.44533		0.23219		21017.9145	357.2174
+
+DBscan with Euclidean distance (min_pt: 2, eps: 0.05)
+Silhouette	Entropy		Variance	Duration
+0.88373		0.0016269		147.5961	293.9125
+
+DBscan with Manhattan distance (min_pt: 2, eps: 0.05)
+Silhouette	Entropy		Variance	Duration
+0.36588		0.059314		2200.578	219.3811
+
+Kmeans with Euclidean distance (min_pt: 2, eps: 0.05)
+Silhouette	Entropy		Variance	Duration
+0.37659	0.48783		177510.2601	212.0118
+
+Kmeans with Manhattan distance (min_pt: 2, eps: 0.05)
+Silhouette	Entropy		Variance	Duration
+0.40959		0.23951		23330.6826	325.2425
+
+DBscan with Euclidean distance (min_pt: 2, eps: 0.1)
+Silhouette	Entropy		Variance	Duration
+0.87995		0.027675		5873.367	300.027
+
+DBscan with Manhattan distance (min_pt: 2, eps: 0.1)
+Silhouette	Entropy		Variance	Duration
+0.3343		0.29247		29166.3419	268.5962
+
+Kmeans with Euclidean distance (min_pt: 2, eps: 0.1)
+Silhouette	Entropy		Variance	Duration
+0.38254	0.44419		136936.0972	253.531
+
+Kmeans with Manhattan distance (min_pt: 2, eps: 0.1)
+Silhouette	Entropy		Variance	Duration
+0.40142		0.33518		61880.8824	272.4155

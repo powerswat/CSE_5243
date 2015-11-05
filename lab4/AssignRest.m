@@ -8,7 +8,7 @@ for i=1:num_rest_rows
    [~, min_idx] = min(dist_mat);
    rest_cluster(i) = cluster(min_idx);
    if mod(i,1000)==0
-       disp(['Iteration: ', num2str(i)]);
+       disp(['Assigned rest docs: ', num2str(i), ' / ', num2str(num_rest_rows)]);
    end
 end
 

@@ -4,7 +4,7 @@ function [tot_mat, tot_vec_lbl, rest_tot_mat, rest_vec_lbl] = genHalfDataset(tot
 rng(28);
 % rand_idx = randperm(size(tot_mat,1), 3000);
 rand_idx = randperm(size(tot_mat,1));
-rand_idx = rand_idx(1:300);
+rand_idx = rand_idx(1:3000);
 rest_tot_mat = tot_mat;
 rest_tot_mat(rand_idx,:) = [];
 rest_vec_lbl = tot_vec_lbl;
