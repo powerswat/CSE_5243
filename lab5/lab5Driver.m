@@ -18,8 +18,14 @@ end
 toc
 
 %% Call the K-min hash oparation
-tic;
-kMinHash(tot_mat, tot_vec_lbl);
-toc
+k = [16 32 64 128 256]
+len_k = length(k);
+mses = zeros(len_k,1);
+for i=1:len_k
+    tic;
+    [est_sims] = kMinHash(tot_mat, tot_vec_lbl, k(i));
+    mses(i) = sum(bsxfun(@minus, jac_sims, est_sims).^2)
+    toc
+end
 
 end
