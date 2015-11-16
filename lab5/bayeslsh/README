@@ -1,0 +1,202 @@
+Dependencies:
+------------
+
+- This package requires that you have the GNU Scientific Library
+  installed on your system. If you don't have it already, you can
+  get it from here: http://www.gnu.org/software/gsl/
+
+Compilation:
+------------
+
+- A simple 'make' should do in Unix-like environments. It creates
+  the executables 'allpairs', 'bayeslsh', 'lsh' in the top-level directory. 
+  When compiling with the optimization flags
+  enabled, warnings about ignoring return values may appear. These
+  may be ignored safely.
+
+- 'make clean' will erase the object files and the executables.
+
+General Usage and Options:
+--------------------------
+
+- This package provides three executables, 'allpairs', 'bayeslsh'
+  and 'lsh'. 'allpairs' is our implementation of Roberto Bayardo
+  et. al.'s paper published in WWW '07 (see References below).
+  'bayeslsh' is our method, described in our paper published in
+  the PVLDB journal. 'lsh' is an implementation of the standard
+  LSH method, e.g. see Andoni and Indyk's paper in CACM 2008. All
+  three methods work for both real-valued as well binary vectors,
+  and for cosine as well as jaccard similarities (jaccard only
+  applies to binary vectors). 
+
+- Executing a program without arguments will print its usage,
+  as well as the default values of the arugments.
+
+- The options may be specified in any order (similar to how it
+  works for general unix utilities).
+
+- All the programs work for both Jaccard and Cosine similarity.
+  For cosine, the user needs to differentiate between cosine for
+  real-valued vectors and binary vectors (this helps the program
+  interpret the input correctly). The argument for specifying the
+  similarity is '-s'. 0 corresponds to cosine for real-valued
+  vectors, 1 to Jaccard and 2 to cosine for binary vectors. 
+
+- The threshold argument '-t' is also mandatory and needs to
+  specify a value between 0 and 1.
+
+- The output file argument '-o' is also mandatory.
+
+- For BayesLSH, the candidate generation algorithm is either
+  AllPairs or LSH and can be specified using '-c'. 0 is for
+  AllPairs and 1 is for LSH. AllPairs generally works well for
+  datasets with small average vector length (say <100), while LSH
+  works better for datasets with higher average vector lengths.
+  This argument is mandatory for BayesLSH.
+
+- BayesLSH-Lite can be used instead of BayesLSH by specifying the
+  '-l' option. 
+
+- The quality of BayesLSH output can be controlled using epsilon,
+  gamma and delta, specified using -e, -g and -d respectively.
+  All of these are values must be between 0 and 1. 
+
+- To run BayesLSH (or LSH) using a random seed, set the '-r' option.
+  Otherwise it is runs using a fixed seed.
+
+- For LSH, if you'd like approximate similarities (instead of
+  exact), set the '-a' option. You also need to specify the
+  number of hashes using which the similarity will be
+  approximated, using the '-h' option.
+
+- For LSH, the expected recall can be set using '-r'.
+
+Input and output formats:
+------------------------
+
+- All the programs accept two file formats - Metis and Binary.
+
+- For weighted datasets, it is assumed that the l2-norm of each
+  record is 1 i.e. the sum of squares of the weights of each
+  vector is 1.
+ 
+- The output format is always the Metis format for weighted
+  datasets.
+
+- See 'example' directory for examples of datasets in both
+  formats.
+
+- Metis format:
+  ------------
+  The first line of the Metis format has at least 2 numbers and
+  no more than 3. The first indicates the number of records in
+  the dataset, the second indicates the number of non-zeros. If
+  the dataset is weighted (i.e has real-valued elements), then
+  the third number is 1. Each successive line represents one
+  vector from the dataset. The i^th vector is therefore
+  represented in the (i+1)^th line in the file (1st line is
+  metadata). In the binary case, each line from line 2 onwards
+  simply lists the non-zero features for that vector. In the
+  weighted case, each line from line 2 onwards lists each
+  non-zero feature along with the weight for that vector.  
+  See example_binary.metis for an example of a dataset with
+  binary-valued vectors (i.e. each record is only a set) in Metis
+  format. example_wts.metis is an example of a dataset with
+  real-valued vectors in Metis format. 
+  
+- Binary format:
+  -------------
+  Binary formats save space compared to the Metis format (or any
+  ASCII format, for that matter).
+
+  The binary file format for datasets with binary-valued vectors
+  is the same as the format used by PPJoin and AllPairs (Roberto
+  Bayardo's implementation). Each record is a series of 4-byte
+  integers:
+  "<record id> <record length> <feature 1> <feature 2>  .. <feature n>"
+
+  For datasets with real-valued vectors, the first 4-byte integer
+  indicates the number of records in the dataset. After that, the
+  records are successively encoded as:
+  "<record length> <feature 1> <feature 2> .. <feature n> <weight 1>
+  <weight 2> .. <weight n>"
+  The record ids are assumed to be in order starting from 1. The
+  weights are encoded as 4-byte floats. 
+
+  Little-endian encodings are assumed. example_binary.bin and
+  example_wts.bin are example datasets in binary format. 
+
+Example invocations:
+--------------------
+
+- All the below examples are assumed to be run for the 'example'
+  directory.
+
+- ../allpairs example_wts.metis -s 0 -f 0 -t 0.5 -o ap.cos
+  (Run AllPairs on example_wts.metis for a similarity threshold
+  of 0.5, similarity is cosine similarity.)
+
+- ../allpairs example_wts.bin -s 0 -f 1 -t 0.5 -o ap.cos
+  (Same as above, except the input file format is now binary.)
+
+- ../allpairs example_binary.bin -s 1 -f 1 -t 0.5 -o ap.jac
+  (The input is now the binary dataset, and the similarity is
+  Jaccard.)
+
+- ../allpairs example_binary.bin -s 2 -f 1 -t 0.5 -o ap.binary_cos
+  (The input is still the binary dataset, but the similarity is
+  now Cosine.)
+
+- ../bayeslsh -t 0.5 -s 0 -c 0 -l 0 -f 1 example_wts.bin -o apblsh.cos
+  (AllPairs + BayesLSH for cosine similarity. epsilon, gamma,
+  delta are at default values.)
+
+- ../bayeslsh -t 0.5 -s 0 -c 0 -l 1 -f 1 example_wts.bin -o apblsh_lite.cos
+  (AllPairs + BayesLSH-Lite for cosine similarity.)
+
+- ../bayeslsh -t 0.5 -s 0 -c 0 -l 0 -e 0.01 -g 0.01 -d 0.01 -f 1 example_wts.bin -o apblsh.cos
+  (AllPairs + BayesLSH with stricter accuracy requirements.
+  epsilon, gamma, delta all are set to 0.01)
+
+- ../bayeslsh -t 0.5 -s 0 -c 1 -l 0 -f 1 example_wts.bin -o lshblsh.cos
+  (LSH + BayesLSH for cosine similarity.)
+ 
+- ../bayeslsh -t 0.5 -s 0 -c 1 -l 1 -f 1 example_wts.bin -o lshblsh_lite.cos
+  (LSH + BayesLSH-Lite for cosine similarity.)
+
+- ../bayeslsh -t 0.5 -s 1 -c 1 -l 1 -f 1 example_binary.bin -o lshblsh_lite.jac
+  (LSH + BayesLSH-Lite for Jaccard similarity.)
+
+- ../bayeslsh -t 0.5 -s 2 -c 0 -l 0 -f 1 example_binary.bin -o apblsh.binary_cos
+  (AllPairs + BayesLSH for cosine similarity on binary datasets 
+  (i.e. the vectors have binary-valued components.))
+
+- ../lsh -t 0.5 -s 0 -f 1 -e 0.98 example_wts.bin -o lshblsh.cos
+  (LSH for cosine similarity. The expected recall is set to 98%.)
+ 
+- ../lsh -t 0.5 -s 0 -f 1 -a 1 -h 2048 example_wts.bin -o lshblsh.cos
+  (LSH for cosine similarity. The similarities are approximated
+  using 2048 hashes, instead of being calculated exactly.)
+ 
+ 
+References:
+-----------
+
+- BayesLSH and variants: 
+  Venu Satuluri and Srinivasan Parthasarathy.
+  "Bayesian Locality Sensitive Hashing for Fast Similarity Search." 
+  arXiv Pre-print: http://arxiv.org/abs/1110.1328 
+  To appear in the PVLDB journal, 2012.
+
+- AllPairs:
+  Roberto Bayardo, Yiming Ma and Ramakrishnan Srikant. "Scaling
+  up all pairs similarity search." Proceedings of WWW 2007.
+
+- LSH: See Charikar's paper in STOC '02, or Andoni and Indyk's
+  review in CACM '08.
+
+Acknowledgments:
+----------------
+
+I am grateful to the authors of Metis, from which some of the 
+utility routines in this package are borrowed. 

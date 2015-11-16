@@ -88,7 +88,7 @@ plc_idcs = idcSets{find(~cellfun(@isempty, strfind(stTags, '<places>')))};
 newid_idcs = idcSets{find(~cellfun(@isempty, strfind(stTags, 'newid')))};
 
 % Stem for body text
-if isBodyComplete == 1
+if isBodyComplete == 0
     bodyTxt = cell(numBodies,1);    
     term_idx = 0;
     
@@ -209,13 +209,13 @@ elseif isBodyComplete == 0
     save([baseDir, 'bodyTxt_fin.mat'], 'bodyTxt');
     
 else
-    if isTFIDF == 0
+    if isTFIDF == 1
         % Count the number of each term appears in the set of documents
         TFIDF = cell(numBodies,2);
         for i=1:numBodies        
             TFIDF(i) = {tabulate(bodyTxt{i})};
             TFIDF(i) = {[TFIDF{i}, cell(size(TFIDF{i},1), 1)]};
-            keep_idx = find(cell2mat(TFIDF{i}(:,2))>1);
+            keep_idx = find(cell2mat(TFIDF{i}(:,2)));
             TFIDF{i} = TFIDF{i}(keep_idx,:);
             tfMax = max(cell2mat(TFIDF{i}(:,2)));
             TFIDF{i}(:,4) = num2cell(0.5 + ((0.5 * cell2mat(TFIDF{i}(:,2))) / tfMax));
@@ -385,7 +385,7 @@ if isBodyFeat == 1
     save([baseDir, 'bdyFeat_fin.mat'], 'bdy_is', 'bdy_js', 'bdy_vals', 'bdyVectLabel', '-v7.3');
 end
 
-if isPlc == 0
+if isPlc == 1
     plcFeatMat = plcTxt;
     save([baseDir, 'plcFeat_fin.mat'], 'plcFeatMat');
 end
