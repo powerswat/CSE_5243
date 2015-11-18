@@ -3,10 +3,11 @@ function [tot_mat, tot_vec_lbl] = genSmallerDataset(tot_mat, ...
             
 % Reduce the size of the feature vector by removing less important features
 filled_idcs = zeros(size(tot_mat,1),1);
-cut_feat_num = length(find(cell2mat(bdyVectLabel(:,2)) > 3.5));
+st_cut = min(find(cell2mat(bdyVectLabel(:,2)) < 3.8));
+end_cut = max(find(cell2mat(bdyVectLabel(:,2)) >= 3));
 tmp_tot_mat = zeros(size(tot_mat,1), size(tot_mat,2));
 
-tmp_tot_mat(:,1:cut_feat_num) = tot_mat(:,1:cut_feat_num);
+tmp_tot_mat(:,st_cut:end_cut) = tot_mat(:,st_cut:end_cut);
 nz_idcs = find(sum(tmp_tot_mat, 2));
 filled_idcs(nz_idcs) = 1;
 idcs_to_fill = find(filled_idcs==0);
@@ -22,9 +23,15 @@ for i=1:len_empty_idcs
     end
     
     tmp_nz_idcs = find(tot_mat(row_to_fill,:));
-    picked_idx = ceil(length(tmp_nz_idcs) * 0.5);
+    for j=1:length(tmp_nz_idcs)
+        if cell2mat(bdyVectLabel(tmp_nz_idcs(j),2))>2
+            picked_idx = j;
+            break;
+        end
+        picked_idx = ceil(length(tmp_nz_idcs) * 0.95);
+    end
     nz_slct_col_idx = tmp_nz_idcs(picked_idx);
-    tmp_tot_mat(:,cut_feat_num+i) = tot_mat(:,nz_slct_col_idx);
+    tmp_tot_mat(:,end_cut+i) = tot_mat(:,nz_slct_col_idx);
     idx_to_fill = find(tot_mat(:,nz_slct_col_idx));
     filled_idcs(idx_to_fill) = 1;
     

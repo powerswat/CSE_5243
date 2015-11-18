@@ -18,14 +18,21 @@ end
 toc
 
 %% Call the K-min hash oparation
-k = [16 32 64 128 256]
+k = [8 16 32 64 128 256]
 len_k = length(k);
 mses = zeros(len_k,1);
 for i=1:len_k
     tic;
     [est_sims] = kMinHash(tot_mat, tot_vec_lbl, k(i));
-    mses(i) = sum(bsxfun(@minus, jac_sims, est_sims).^2)
+    mses(i) = sum(bsxfun(@minus, jac_sims, est_sims).^2);
     toc
 end
+
+rmses = sqrt(mses./length(est_sims))
+save([baseDir, 'rmse_results.mat'], 'rmses');
+
+plot(k,rmses);
+xlabel('No. of Minhash (K)')
+ylabel('RMSE')
 
 end

@@ -209,7 +209,7 @@ elseif isBodyComplete == 0
     save([baseDir, 'bodyTxt_fin.mat'], 'bodyTxt');
     
 else
-    if isTFIDF == 1
+    if isTFIDF == 0
         % Count the number of each term appears in the set of documents
         TFIDF = cell(numBodies,2);
         for i=1:numBodies        
@@ -292,7 +292,7 @@ end
         tpcVec = unique(tpcVec);
 
 % Composite the feature vector
-if isTpcFeat == 1
+if isTpcFeat == 0
     maxWordLen = max(cellfun(@length, strfind(tpcTxt, ' ')));
     tpcMat = cell(length(tpcTxt), maxWordLen);
     for i=1:length(tpcTxt)
@@ -320,7 +320,7 @@ if isTpcFeat == 1
     save([baseDir, 'tpcFeat_fin.mat'], 'tpc_is' ,'tpc_js', 'tpcVectLabel', 'cntVec');
 end
 
-if isBodyFeat == 1
+if isBodyFeat == 0
     [row, ~] = find(cntVec);
     row = unique(row);
     idcs = [1:length(cntVec)]';
@@ -385,7 +385,7 @@ if isBodyFeat == 1
     save([baseDir, 'bdyFeat_fin.mat'], 'bdy_is', 'bdy_js', 'bdy_vals', 'bdyVectLabel', '-v7.3');
 end
 
-if isPlc == 1
+if isPlc == 0
     plcFeatMat = plcTxt;
     save([baseDir, 'plcFeat_fin.mat'], 'plcFeatMat');
 end
