@@ -2,7 +2,7 @@ function [tot_mat, tot_vec_lbl] = readInputMat(baseDir)
 
 % Read the necessary mat files
 disp('Load existing Body features');
-load([baseDir, 'bdyFeat_fin.mat']);
+load([baseDir, 'bdyFeat_fin_bin.mat']);
 
 % Transform the read datasets so it is able to be analyzed
 disp('Transform the read datasets so it is able to be analyzed');
