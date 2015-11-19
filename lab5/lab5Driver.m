@@ -1,19 +1,30 @@
-function lab5Driver()
+function lab5Driver(is_small)
+
+if ~exist('is_small', 'var') || isempty(is_small), is_small = 0; end
 
 %% Read all the necessary input data
 baseDir = 'C:\Temp\CSE_5243\';
 disp('Read all the necessary input data');
 tic;
-[tot_mat, tot_vec_lbl] = readInput(baseDir);
+[tot_mat, tot_vec_lbl] = readInput(baseDir, is_small);
 toc
 
 %% Create a baseline by calculating Jaccard similarity for every pair of documents
 tic;
-if ~exist([baseDir, 'jac_sims.mat'], 'file')
-    jac_sims = 1-pdist(tot_mat, 'jaccard')';
-    save([baseDir, 'jac_sims.mat'], 'jac_sims');
+if is_small == 0
+    if ~exist([baseDir, 'jac_sims.mat'], 'file')
+        jac_sims = 1-pdist(tot_mat, 'jaccard')';
+        save([baseDir, 'jac_sims.mat'], 'jac_sims');
+    else
+        load([baseDir, 'jac_sims.mat']);
+    end
 else
-    load([baseDir, 'jac_sims.mat']);
+    if ~exist([baseDir, 'jac_sims_s.mat'], 'file')
+        jac_sims = 1-pdist(tot_mat, 'jaccard')';
+        save([baseDir, 'jac_sims_s.mat'], 'jac_sims');
+    else
+        load([baseDir, 'jac_sims_s.mat']);
+    end
 end
 orig_time = toc;
 disp('Calculating Jaccard similarity on the raw feature vector');
@@ -44,18 +55,24 @@ for i=1:len_k
     disp(['K = ', num2str(k(i)), ' -> ', num2str(rmses(i))]);
 end
 
-save([baseDir, 'rmse_results.mat'], 'rmses');
-
 figure;
 plot(k,minhash_time);
 xlabel('No. of Minhash (K)')
 ylabel('Sec.')
-print([baseDir, 'elap_time'], '-dpng');
+if is_small == 0
+    print([baseDir, 'elap_time'], '-dpng');
+else
+    print([baseDir, 'elap_time_s'], '-dpng');
+end
 
 figure;
 plot(k,rmses);
 xlabel('No. of Minhash (K)')
 ylabel('RMSE')
-print([baseDir, 'rmse'], '-dpng');
+if is_small == 0
+    print([baseDir, 'rmse'], '-dpng');
+else
+    print([baseDir, 'rmse_s'], '-dpng');
+end
 
 end
